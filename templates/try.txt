@@ -1,0 +1,43 @@
+{
+            '$lookup': {
+                'from': "Project",
+                'localField': "emp_id",
+                'foreignField': "emp_id",
+                'as': "employee_info"
+            }
+        },
+        {
+            '$unwind': "$employee_info"
+        },
+        {
+            '$project': {
+            '_id': 0,
+            'emp_id': 1,
+        }
+    }
+
+
+    pipeline = [
+        {
+            '$match': {
+                'department': department_name
+            }
+        },
+        {
+            '$lookup': {
+                'from': 'Project',
+                'localField': 'pro_id',
+                'foreignField': '_id',
+                'as': 'project_details'
+            }
+        },
+        {
+            '$project': {
+                '_id':0,
+                'name': 1,
+                'position': 1,
+                'projects': '$project_details.name'
+            }
+        }
+    ]
+    employees_in_department = list(mongo.db.Employee.aggregate(pipeline))

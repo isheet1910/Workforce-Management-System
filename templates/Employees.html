@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Employee Management System</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">George Mason University</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ url_for('Employees') }}">Employees <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('Managers') }}">Managers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('Projects') }}">Projects</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('Searches') }}">Searches</a>
+                </li>
+                <!-- <li class="nav-item ">
+                    <a class="nav-link" href="{{ url_for('Query1') }}">Query 1 </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('Query2') }}">Query 2</a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="{{ url_for('Query3') }}">Query 3</a> -->
+                <!-- </li> -->
+                <li class="nav-item">
+                    <a class="nav-link disabled">Result</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('Visualize') }}">Visualize Department Strength</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('Visualizeprojects') }}">Visualize Project Strength</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
+
+
+
+    <center>
+        <h3 class="mb-4">Employees from MongoDB Table</h3>
+    </center>
+
+    <center><button class="btn btn-primary btn-lg my-4" onclick="showaddemployee()"><h3>Add Employee </h3></button></center>
+    <div id="add_employee_section" class="bg-dark text-white py-4 my-3" style="display: none;">
+        <form action="/add_employee" method="post" class="ml-5">
+            <div class="form-group">
+                <label for="name" class="">Name:</label>
+                <div class="form-row">
+                    <div class="col-7">
+                        <input type="text" class="form-control" id="name" name="name" required><br>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="position" class="">Position:</label>
+                <div class="form-row">
+                    <div class="col-7">
+                        <input type="text" class="form-control" id="position" name="position" required><br>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="department" class="">Department:</label>
+                <div class="form-row">
+                    <div class="col-7">
+                        <input type="text" class="form-control" id="department" name="department" required><br>
+                    </div>
+                </div>
+            </div>
+            <input type="submit" value="Add Data" class="btn btn-success">
+        </form>
+    </div>
+
+    <table class="table table-dark">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Position</th>
+                <th scope="col">Department</th>
+                <th scope="col" colspan=2 center>
+                    <center>Actions
+                    </center>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employee in Employee %}
+            <tr>
+                <td scope="row">{{employee.emp_id}} </td>
+                <td>{{ employee.name }}</td>
+                <td>{{ employee.position }}</td>
+                <td>{{ employee.department }}</td>
+
+                <td>{% set flask_variable = employee.emp_id %}
+                    <center>
+                        <input type="submit" value="Update" onclick="showupdateemployee('{{employee.emp_id}}')" class="btn btn-warning">
+                    </center>
+                </td>
+                <td>
+                    <center>
+                        <form action="/delete_employee/{{employee.emp_id}}" method="post">
+                            <!-- {% for message in get_flashed_messages() %} {{message}} {% endfor %}  -->
+                            <input type="submit" value="Delete" class="btn btn-danger">
+                        </form>
+                    </center>
+                </td>
+            </tr>
+            <tr>
+                <td colspan=6>
+                    <div class="update_employee_section_ " id="{{employee.emp_id}}" style="display: none;">
+                        <form action="/update_employee/{{employee.emp_id}}" method="post" class="ml-5">
+                            <div class="form-row">
+                                <div class="form-group ">
+                                    <label for="name">Name:</label>
+                                    <div class="form-row">
+                                        <div class="col-7">
+                                            <input type="text" id="name" name="name" placeholder="{{employee.name}}" value="{{employee.name}}" required><br>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group ">
+                                    <label for="position">Position:</label>
+                                    <div class="form-row">
+                                        <div class="col-7">
+                                            <input type="text" id="position" name="position" placeholder="{{employee.position}}" value="{{employee.position}}" required><br>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group ">
+                                    <label for="department">Department:</label>
+                                    <div class="form-row">
+                                        <div class="col-7">
+                                            <input type="text" id="department" name="department" placeholder="{{employee.department}}" value={{employee.department}} required><br>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="submit" value="Confirm" class="btn btn-success">
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+    <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+    <script>
+        function showupdateemployee(emp_id) {
+            var z = document.getElementById(emp_id);
+            if (z.style.display === "block") {
+                z.style.display = "none"
+            } else {
+                z.style.display = "block"
+            }
+        }
+
+        function showaddemployee() {
+            var x = document.getElementById("add_employee_section");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+
+</html>
